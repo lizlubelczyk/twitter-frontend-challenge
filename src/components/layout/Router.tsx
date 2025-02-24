@@ -13,10 +13,10 @@ import PostPage from "../../pages/post-page/PostPage";
 
 const WithNav = () => {
   return (
-    <StyledSideBarPageWrapper>
-      <NavBar />
-      <Outlet />
-    </StyledSideBarPageWrapper>
+      <StyledSideBarPageWrapper>
+        <NavBar />
+        <Outlet />
+      </StyledSideBarPageWrapper>
   );
 };
 
