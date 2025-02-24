@@ -86,7 +86,7 @@ const CommentPage = () => {
       {post && (
         <StyledContainer gap={"16px"}>
           <AuthorData
-            id={post.authorId}
+            id={post.author.id}
             name={post.author.name ?? "Name"}
             username={post.author.username}
             createdAt={post.createdAt}

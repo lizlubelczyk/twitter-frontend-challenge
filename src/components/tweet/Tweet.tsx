@@ -33,28 +33,37 @@ const Tweet = ({post}: TweetProps) => {
     return await service.me()
   }
 
-  const getCountByType = (type: string): number => {
-    return actualPost?.reactions?.filter((r) => r.type === type).length ?? 0;
-  };
+  console.log(post)
+    const handleReaction = async (type: string) => {
+        let reacted;
+        if (type === "LIKE") {
+            reacted = actualPost.likes.find((r) => r.userId === user?.id);
+            if (reacted) {
+                await service.deleteReaction(reacted.id);
+            } else {
+                await service.createReaction(actualPost.id, type);
+            }
+        } else if (type === "RETWEET") {
+            reacted = actualPost.retweets.find((r) => r.userId === user?.id);
+            if (reacted) {
+                await service.deleteReaction(reacted.id);
+            } else {
+                await service.createReaction(actualPost.id, type);
+            }
+        }
+        console.log(post.id)
+        const newPost = await service.getPostById(post.id);
+        setActualPost(newPost);
+    };
 
-  const handleReaction = async (type: string) => {
-    const reacted = actualPost.reactions.find(
-        (r) => r.type === type && r.userId === user?.id
-    );
-    if (reacted) {
-      await service.deleteReaction(reacted.id);
-    } else {
-      await service.createReaction(actualPost.id, type);
-    }
-    const newPost = await service.getPostById(post.id);
-    setActualPost(newPost);
-  };
-
-  const hasReactedByType = (type: string): boolean => {
-    return actualPost.reactions.some(
-        (r) => r.type === type && r.userId === user?.id
-    );
-  };
+    const hasReactedByType = (type: string): boolean => {
+        if (type === "LIKE") {
+            return actualPost.likes.some((r) => r.userId === user?.id);
+        } else if (type === "RETWEET") {
+            return actualPost.retweets.some((r) => r.userId === user?.id);
+        }
+        return false;
+    };
 
   return (
       <StyledTweetContainer>
@@ -72,7 +81,7 @@ const Tweet = ({post}: TweetProps) => {
               createdAt={post.createdAt}
               profilePicture={post.author.profilePicture}
           />
-          {post.authorId === user?.id && (
+          {post.author.id === user?.id && (
               <>
                 <DeletePostModal
                     show={showDeleteModal}
@@ -111,14 +120,14 @@ const Tweet = ({post}: TweetProps) => {
           />
           <Reaction
               img={IconType.RETWEET}
-              count={getCountByType("RETWEET")}
+              count={actualPost.retweets.length}
               reactionFunction={() => handleReaction("RETWEET")}
               increment={1}
               reacted={hasReactedByType("RETWEET")}
           />
           <Reaction
               img={IconType.LIKE}
-              count={getCountByType("LIKE")}
+              count={actualPost.likes.length}
               reactionFunction={() => handleReaction("LIKE")}
               increment={1}
               reacted={hasReactedByType("LIKE")}
