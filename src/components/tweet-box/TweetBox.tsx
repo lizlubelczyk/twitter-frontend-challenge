@@ -19,6 +19,7 @@ interface TweetBoxProps {
     parentId?: string;
     close?: () => void;
     mobile?: boolean;
+    borderless?: boolean;
 }
 
 const TweetBox: React.FC<TweetBoxProps> = (props: TweetBoxProps) => {
@@ -74,7 +75,7 @@ const TweetBox: React.FC<TweetBoxProps> = (props: TweetBoxProps) => {
     };
 
     return (
-        <StyledTweetBoxContainer>
+        <StyledTweetBoxContainer borderless={props.borderless}>
             {mobile && (
                 <StyledContainer
                     flexDirection={"row"}

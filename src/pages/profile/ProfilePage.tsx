@@ -87,6 +87,7 @@ const ProfilePage = () => {
         });
       } else {
         await service.followUser(id);
+        setFollowing(true);
         service.getProfile(id).then((res) => setProfile(res));
       }
       return await getProfileData();

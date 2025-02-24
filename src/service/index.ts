@@ -23,10 +23,11 @@ export interface Post {
   parentId?: string;
   images?: string[];
   createdAt: Date;
-  authorId: string;
   author: Author;
-  reactions: Reaction[];
+  likes: Reaction[];
+  retweets: Reaction[];
   comments: Post[];
+  authorId: string;
 }
 
 export interface Reaction {
