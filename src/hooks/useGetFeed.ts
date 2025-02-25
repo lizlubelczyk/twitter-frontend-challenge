@@ -11,13 +11,16 @@ export const useGetFeed = () => {
 
   const dispatch = useAppDispatch();
 
-  const service = useHttpRequestService();
+  const service = useHttpRequestService()
+
+  const limit = 10;
+  const skip = 0;
 
   useEffect(() => {
     try {
       setLoading(true);
       setError(false);
-      service.getPosts(query).then((res) => {
+      service.getPosts(query, limit, skip).then((res) => {
         const updatedPosts = Array.from(new Set([...posts, ...res]));
         dispatch(updateFeed(updatedPosts));
         dispatch(setLength(updatedPosts.length));

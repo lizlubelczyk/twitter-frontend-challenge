@@ -13,10 +13,12 @@ const HomePage = () => {
   const navigate = useNavigate();
   const query = useAppSelector((state) => state.user.query);
   const service = useHttpRequestService();
+  const limit = 10;
+  const skip = 0;
 
   const handleSetUser = async () => {
     try {
-      const data = await service.getPosts(query);
+      const data = await service.getPosts(query, limit, skip);
       dispatch(updateFeed(data));
     } catch (e) {
       navigate("/sign-in");
