@@ -26,6 +26,8 @@ const CommentPage = () => {
   const { length, query } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const limit = 10;
+  const skip = 0;
 
   useEffect(() => {
     handleGetUser().then(r => setUser(r))
@@ -58,7 +60,7 @@ const CommentPage = () => {
     setContent("");
     setImages([]);
     dispatch(setLength(length + 1));
-    const posts = await service.getPosts(query);
+    const posts = await service.getPosts(query, limit, skip);
     dispatch(updateFeed(posts));
     exit();
   };

@@ -34,7 +34,8 @@ const TweetBox: React.FC<TweetBoxProps> = (props: TweetBoxProps) => {
     const {t} = useTranslation();
     const service = useHttpRequestService()
     const [user, setUser] = useState<User|null>(null)
-
+    const limit = 10;
+    const skip = 0;
 
     useEffect(() => {
         handleGetUser().then(r => setUser(r))
@@ -53,7 +54,7 @@ const TweetBox: React.FC<TweetBoxProps> = (props: TweetBoxProps) => {
             setImages([]);
             setImagesPreview([]);
             dispatch(setLength(length + 1));
-            const posts = await httpService.getPosts(query);
+            const posts = await httpService.getPosts(query, limit, skip);
             dispatch(updateFeed(posts));
             close && close();
         } catch (e) {

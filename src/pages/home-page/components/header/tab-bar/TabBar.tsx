@@ -11,11 +11,13 @@ const TabBar = () => {
   const dispatch = useAppDispatch();
   const service = useHttpRequestService();
   const { t } = useTranslation();
+  const limit = 10;
+    const skip = 0;
 
   const handleClick = async (value: boolean, query: string) => {
     setActiveFirstPage(value);
     dispatch(setQuery(query));
-    const data = await service.getPosts(query).catch((e) => {
+    const data = await service.getPosts(query, limit, skip).catch((e) => {
       console.log(e);
     });
     dispatch(updateFeed(data));
