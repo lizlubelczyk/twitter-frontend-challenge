@@ -1,11 +1,11 @@
-export interface SingUpData {
+export interface SignUpData {
   name: string;
   password: string;
   email: string;
   username: string;
 }
 
-export interface SingInData {
+export interface SignInData {
   username?: string;
   email?: string;
   password: string;

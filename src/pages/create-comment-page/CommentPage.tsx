@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { BackArrowIcon } from "../../components/icon/Icon";
 import Button from "../../components/button/Button";
-import {Post, User} from "../../service";
 import AuthorData from "../../components/tweet/user-post-data/AuthorData";
 import ImageContainer from "../../components/tweet/tweet-image/ImageContainer";
 import { useLocation } from "react-router-dom";
-import { useHttpRequestService } from "../../service/HttpRequestService";
 import TweetInput from "../../components/tweet-input/TweetInput";
 import ImageInput from "../../components/common/ImageInput";
 import { setLength, updateFeed } from "../../redux/user";
@@ -15,42 +13,25 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { StyledContainer } from "../../components/common/Container";
 import { StyledLine } from "../../components/common/Line";
 import { StyledP } from "../../components/common/text";
+import {useGetPosts, useMe, useGetPostById} from "../../hooks";
 
 const CommentPage = () => {
   const [content, setContent] = useState("");
-  const [post, setPost] = useState<Post | undefined>(undefined);
   const [images, setImages] = useState<File[]>([]);
-  const [user, setUser] = useState<User>()
   const postId = useLocation().pathname.split("/")[3];
-  const service = useHttpRequestService();
   const { length, query } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const limit = 10;
   const skip = 0;
-
-  useEffect(() => {
-    handleGetUser().then(r => setUser(r))
-  }, []);
-
-  const handleGetUser = async () => {
-    return await service.me()
-  }
+  const { data: user } = useMe();
+  const {data: post } = useGetPostById(postId);
+  const {data: posts} = useGetPosts(query, limit, skip);
 
   useEffect(() => {
     window.innerWidth > 600 && exit();
   }, []);
 
-  useEffect(() => {
-    service
-      .getPostById(postId)
-      .then((res) => {
-        setPost(res);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, [postId]);
 
   const exit = () => {
     window.history.back();
@@ -60,7 +41,6 @@ const CommentPage = () => {
     setContent("");
     setImages([]);
     dispatch(setLength(length + 1));
-    const posts = await service.getPosts(query, limit, skip);
     dispatch(updateFeed(posts));
     exit();
   };

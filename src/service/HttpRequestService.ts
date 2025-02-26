@@ -1,17 +1,17 @@
-import type { PostData, SingInData, SingUpData } from "./index";
+import type { PostData, SignUpData, SignInData } from "./index";
 import axios from "axios";
 import { S3Service } from "./S3Service";
 import axiosInstance from "./AxiosInstance";
 
 const httpRequestService = {
-  signUp: async (data: Partial<SingUpData>) => {
+  signUp: async (data: Partial<SignUpData>) => {
     const res = await axiosInstance.post(`/auth/signup`, data);
     if (res.status === 201) {
       localStorage.setItem("token", `Bearer ${res.data.token}`);
       return true;
     }
   },
-  signIn: async (data: SingInData) => {
+  signIn: async (data: SignInData) => {
     const res = await axiosInstance.post(`/auth/login`, data);
     if (res.status === 200) {
       localStorage.setItem("token", `Bearer ${res.data.token}`);
@@ -44,7 +44,6 @@ const httpRequestService = {
     const res = await axiosInstance.get(`/post/${query}`, {
       params: {
         limit,
-        skip,
       },
     });
     if (res.status === 200) {

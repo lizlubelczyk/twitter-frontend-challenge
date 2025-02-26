@@ -15,27 +15,16 @@ import {StyledNavBarContainer} from "./NavBarContainer";
 import {StyledContainer} from "../common/Container";
 import {StyledIconContainer} from "./IconContainer";
 import {StyledNavItemsContainer} from "./navItem/NavItemsContainer";
-import {StyledP} from "../common/text";
-import {useHttpRequestService} from "../../service/HttpRequestService";
-import {User} from "../../service";
 import ProfileLogoutPrompt from "../profile-logout/ProfileLogoutPrompt";
+import {useMe} from "../../hooks";
 
 const NavBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [tweetModalOpen, setTweetModalOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
-  const service = useHttpRequestService()
-  const [user, setUser] = useState<User>()
   const {t} = useTranslation();
-
-  useEffect(() => {
-    handleGetUser().then(r => setUser(r))
-  }, []);
-
-  const handleGetUser = async () => {
-    return await service.me()
-  }
+  const { data: user, error, isLoading } = useMe();
 
   const handleAvatarClick = () => {
     if (window.innerWidth < 1265) {

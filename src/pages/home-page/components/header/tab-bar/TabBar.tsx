@@ -5,22 +5,26 @@ import { useHttpRequestService } from "../../../../../service/HttpRequestService
 import { useTranslation } from "react-i18next";
 import { useAppDispatch } from "../../../../../redux/hooks";
 import { StyledTabBarContainer } from "./TabBarContainer";
+import { useGetPosts } from "../../../../../hooks";
 
 const TabBar = () => {
   const [activeFirstPage, setActiveFirstPage] = useState(true);
   const dispatch = useAppDispatch();
   const service = useHttpRequestService();
+  const [query, setQueryValue] = useState("");
   const { t } = useTranslation();
   const limit = 10;
-    const skip = 0;
+  const skip = 0;
+  const { data, error, isLoading } = useGetPosts(query, limit, skip);
 
-  const handleClick = async (value: boolean, query: string) => {
+
+  const handleClick = (value: boolean, query: string) => {
     setActiveFirstPage(value);
+    setQueryValue(query);
     dispatch(setQuery(query));
-    const data = await service.getPosts(query, limit, skip).catch((e) => {
-      console.log(e);
-    });
-    dispatch(updateFeed(data));
+    if (data) {
+      dispatch(updateFeed(data));
+    }
   };
 
   return (
