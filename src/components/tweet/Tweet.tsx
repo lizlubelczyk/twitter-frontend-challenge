@@ -12,6 +12,7 @@ import DeletePostModal from "./delete-post-modal/DeletePostModal";
 import ImageContainer from "./tweet-image/ImageContainer";
 import CommentModal from "../comment/comment-modal/CommentModal";
 import {useNavigate} from "react-router-dom";
+import {useMe} from "../../hooks";
 
 interface TweetProps {
   post: Post;
@@ -23,15 +24,7 @@ const Tweet = ({post}: TweetProps) => {
   const [showCommentModal, setShowCommentModal] = useState<boolean>(false);
   const service = useHttpRequestService();
   const navigate = useNavigate();
-  const [user, setUser] = useState<User>()
-
-  useEffect(() => {
-    handleGetUser().then(r => setUser(r))
-  }, []);
-
-  const handleGetUser = async () => {
-    return await service.me()
-  }
+  const { data: user, error, isLoading } = useMe();
 
   console.log(post)
     const handleReaction = async (type: string) => {

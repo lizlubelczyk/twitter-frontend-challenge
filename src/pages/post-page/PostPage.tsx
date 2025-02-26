@@ -8,6 +8,7 @@ import { StyledH5 } from "../../components/common/text";
 import { StyledFeedContainer } from "../home-page/components/contentContainer/FeedContainer";
 import CommentFeed from "../../components/feed/CommentFeed";
 import {Reaction} from "../../service";
+import {useGetPostById} from "../../hooks";
 
 interface Post {
     id: string;
@@ -30,22 +31,7 @@ interface Post {
 
 const PostPage: React.FC = () => {
   const [postId, setPostId] = useState<string>(window.location.href.split("/")[4]);
-  const [post, setPost] = useState<Post | null>(null);
-
-  const service = new HttpService().service;
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const res = await service.getPostById(postId);
-        setPost(res);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    fetchPost();
-  }, [postId]);
+  const {data: post} = useGetPostById(postId);
 
   return (
       <StyledContainer borderRight={"1px solid #ebeef0"}>

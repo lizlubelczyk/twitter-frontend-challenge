@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Button from "../button/Button";
 import TweetInput from "../tweet-input/TweetInput";
-import {useHttpRequestService} from "../../service/HttpRequestService";
 import {setLength, updateFeed} from "../../redux/user";
 import ImageContainer from "../tweet/tweet-image/ImageContainer";
 import {BackArrowIcon} from "../icon/Icon";
@@ -12,8 +11,8 @@ import {StyledTweetBoxContainer} from "./TweetBoxContainer";
 import {StyledContainer} from "../common/Container";
 import {StyledButtonContainer} from "./ButtonContainer";
 import {useDispatch, useSelector} from "react-redux";
-import {User} from "../../service";
 import {RootState} from "../../redux/store";
+import { useMe, useGetPosts } from "../../hooks";
 
 interface TweetBoxProps {
     parentId?: string;
@@ -29,21 +28,13 @@ const TweetBox: React.FC<TweetBoxProps> = (props: TweetBoxProps) => {
     const [imagesPreview, setImagesPreview] = useState<string[]>([]);
 
     const {length, query} = useSelector((state: RootState) => state.user);
-    const httpService = useHttpRequestService();
     const dispatch = useDispatch();
     const {t} = useTranslation();
-    const service = useHttpRequestService()
-    const [user, setUser] = useState<User|null>(null)
     const limit = 10;
     const skip = 0;
 
-    useEffect(() => {
-        handleGetUser().then(r => setUser(r))
-    }, []);
-
-    const handleGetUser = async () => {
-        return await service.me()
-    }
+    const { data: user, error, isLoading } = useMe();
+    const { data: posts, error: postsError, isLoading: postsLoading } = useGetPosts(query, limit, skip);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContent(e.target.value);
@@ -54,7 +45,6 @@ const TweetBox: React.FC<TweetBoxProps> = (props: TweetBoxProps) => {
             setImages([]);
             setImagesPreview([]);
             dispatch(setLength(length + 1));
-            const posts = await httpService.getPosts(query, limit, skip);
             dispatch(updateFeed(posts));
             close && close();
         } catch (e) {
