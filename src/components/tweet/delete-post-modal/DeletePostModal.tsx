@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DeleteIcon } from "../../icon/Icon";
 import Modal from "../../modal/Modal";
 import Button from "../../button/Button";
@@ -17,15 +17,16 @@ interface DeletePostModalProps {
 }
 
 export const DeletePostModal = ({
-  show,
-  id,
-  onClose,
-}: DeletePostModalProps) => {
+                                  show,
+                                  id,
+                                  onClose,
+                                }: DeletePostModalProps) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const feed = useAppSelector((state) => state.user.feed);
   const dispatch = useAppDispatch();
   const service = useHttpRequestService();
   const { t } = useTranslation();
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const handleDelete = () => {
     try {
@@ -43,31 +44,50 @@ export const DeletePostModal = ({
     onClose();
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      handleClose();
+    }
+  };
+
+  useEffect(() => {
+    if (showModal) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showModal]);
+
   return (
-    <>
-      {show && (
-        <>
-          <StyledDeletePostModalContainer onClick={() => setShowModal(true)}>
-            <DeleteIcon />
-            <p>{t("buttons.delete")}</p>
-          </StyledDeletePostModalContainer>
-          <Modal
-            title={t("modal-title.delete-post") + "?"}
-            text={t("modal-content.delete-post")}
-            show={showModal}
-            onClose={handleClose}
-            acceptButton={
-              <Button
-                text={t("buttons.delete")}
-                buttonType={ButtonType.DELETE}
-                size={"MEDIUM"}
-                onClick={handleDelete}
-              />
-            }
-          />
-        </>
-      )}
-    </>
+      <>
+        {show && (
+            <>
+              <StyledDeletePostModalContainer onClick={() => setShowModal(true)}>
+                <DeleteIcon />
+                <p>{t("buttons.delete")}</p>
+              </StyledDeletePostModalContainer>
+              <div ref={modalRef}>
+                <Modal
+                    title={t("modal-title.delete-post") + "?"}
+                    text={t("modal-content.delete-post")}
+                    show={showModal}
+                    onClose={handleClose}
+                    acceptButton={
+                      <Button
+                          text={t("buttons.delete")}
+                          buttonType={ButtonType.DELETE}
+                          size={"MEDIUM"}
+                          onClick={handleDelete}
+                      />
+                    }
+                />
+              </div>
+            </>
+        )}
+      </>
   );
 };
 
