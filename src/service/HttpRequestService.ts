@@ -89,8 +89,8 @@ const httpRequestService = {
       return res.data;
     }
   },
-  deleteReaction: async (reactionId: string) => {
-    const res = await axiosInstance.delete(`/reaction/${reactionId}`);
+  deleteReaction: async (postId: string, type: string) => {
+    const res = await axiosInstance.delete(`/reaction/${type}/${postId}`);
     if (res.status === 200) {
       return res.data;
     }
@@ -128,7 +128,7 @@ const httpRequestService = {
   },
 
   getProfile: async (id: string) => {
-    const res = await axiosInstance.get(`/user/profile/${id}`);
+    const res = await axiosInstance.get(`/user/byUserId/${id}`);
     if (res.status === 200) {
       return res.data;
     }
@@ -227,7 +227,7 @@ const httpRequestService = {
     limit: number,
     after: string
   ) => {
-    const res = await axiosInstance.get(`/post/comment/by_post/${id}`, {
+    const res = await axiosInstance.get(`/comment/${id}`, {
       params: {
         limit,
         after,
@@ -238,7 +238,7 @@ const httpRequestService = {
     }
   },
   getCommentsByPostId: async (id: string) => {
-    const res = await axiosInstance.get(`/post/comment/by_post/${id}`);
+    const res = await axiosInstance.get(`/comment/${id}`);
     if (res.status === 200) {
       return res.data;
     }

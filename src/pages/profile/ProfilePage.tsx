@@ -45,7 +45,7 @@ const ProfilePage = () => {
         navigate("/sign-in");
       });
     } else {
-      service.unfollowUser(profile!.id).then(async () => {
+      service.unfollowUser(profile!.user.id).then(async () => {
         setFollowing(false);
         setShowModal(false);
         await refetch();
@@ -56,7 +56,7 @@ const ProfilePage = () => {
   useEffect(() => {
     if (profile) {
       setFollowing(
-          profile.followers.some((follower: User) => follower.id === user?.id)
+          profile.isFollowing
       );
     }
   }, [profile, user]);
@@ -77,7 +77,7 @@ const ProfilePage = () => {
         setShowModal(true);
         setModalValues({
           text: t("modal-content.unfollow"),
-          title: `${t("modal-title.unfollow")} @${profile?.username}?`,
+          title: `${t("modal-title.unfollow")} @${profile?.user.username}?`,
           type: ButtonType.FOLLOW,
           buttonText: t("buttons.unfollow"),
         });
@@ -109,9 +109,9 @@ const ProfilePage = () => {
                       flexDirection={"row"}
                   >
                     <ProfileInfo
-                        name={profile!.name!}
-                        username={profile!.username}
-                        profilePicture={profile!.profilePicture}
+                        name={profile!.user.name!}
+                        username={profile!.user.username}
+                        profilePicture={profile!.user.profilePicture}
                     />
                     <Button
                         buttonType={handleButtonType().component}
@@ -122,7 +122,7 @@ const ProfilePage = () => {
                   </StyledContainer>
                 </StyledContainer>
                 <StyledContainer width={"100%"}>
-                  {profile.followers ? (
+                  {profile.user.followers ? (
                       <ProfileFeed />
                   ) : (
                       <StyledH5>Private account</StyledH5>
