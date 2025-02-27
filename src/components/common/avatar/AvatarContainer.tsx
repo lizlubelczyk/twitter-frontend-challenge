@@ -13,7 +13,7 @@ export const StyledAvatarContainer = styled.div`
   height: ${(props: AvatarContainerProps) => props.height || "48px"};
   border-radius: 50%;
   cursor: pointer;
-
+    overflow: hidden;
   img {
     width: 100%;
     height: 100%;

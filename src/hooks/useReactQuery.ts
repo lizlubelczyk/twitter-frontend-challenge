@@ -6,6 +6,7 @@ export function useApiQuery<T>(queryKey: string[], queryFn: () => Promise<T>) {
         queryFn,
     });
 }
+
 export function useApiMutation<T>(
     mutationFn: MutationFunction<T>,
     invalidateQuery: boolean = true,

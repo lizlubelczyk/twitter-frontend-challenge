@@ -43,7 +43,7 @@ const PostPage: React.FC = () => {
               <>
                 <Tweet post={post} />
                 <StyledContainer borderBottom={"1px solid #ebeef0"} padding={"16px"}>
-                  <TweetBox parentId={postId} />
+                  <TweetBox parentId={postId} borderless={true}/>
                 </StyledContainer>
                 <StyledContainer minHeight={"53.5vh"}>
                   <CommentFeed postId={postId} />

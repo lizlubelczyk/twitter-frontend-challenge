@@ -6,7 +6,7 @@ import { SearchBar } from "../../components/search-bar/SearchBar";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { StyledUserSuggestionContainer } from "./UserSeuggestionContainer";
-import { useGetPosts } from "../../hooks";
+import {useGetPosts, useInvalidateQueriesAtMidnight} from "../../hooks";
 
 const HomePage = () => {
   const dispatch = useAppDispatch();
@@ -27,6 +27,8 @@ const HomePage = () => {
   useEffect(() => {
     handleSetUser().then();
   }, []);
+
+  useInvalidateQueriesAtMidnight([query, limit.toString(), skip.toString()]);
 
   return (
     <>

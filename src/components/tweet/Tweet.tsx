@@ -32,16 +32,16 @@ const Tweet = ({post}: TweetProps) => {
         if (type === "LIKE") {
             reacted = actualPost.likes.find((r) => r.userId === user?.id);
             if (reacted) {
-                await service.deleteReaction(reacted.id);
+                await service.deleteReaction(actualPost.id, "like");
             } else {
-                await service.createReaction(actualPost.id, type);
+                await service.createReaction(actualPost.id, "like");
             }
         } else if (type === "RETWEET") {
             reacted = actualPost.retweets.find((r) => r.userId === user?.id);
             if (reacted) {
-                await service.deleteReaction(reacted.id);
+                await service.deleteReaction(actualPost.id, "retweet");
             } else {
-                await service.createReaction(actualPost.id, type);
+                await service.createReaction(actualPost.id, "retweet");
             }
         }
         console.log(post.id)
