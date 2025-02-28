@@ -21,4 +21,16 @@ axiosInstance.interceptors.request.use(
     }
 );
 
+axiosInstance.interceptors.response.use(
+    (response) => response, // If the response is fine, just return it
+    (error) => {
+        if (error.response?.status === 401) {
+            // Handle unauthorized access
+            localStorage.removeItem("token");
+            window.location.href = "/sign-in";
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default axiosInstance;
