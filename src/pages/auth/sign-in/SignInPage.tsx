@@ -1,73 +1,113 @@
-import React, { useState } from "react";
 import logo from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useHttpRequestService } from "../../../service/HttpRequestService";
 import AuthWrapper from "../AuthWrapper";
 import LabeledInput from "../../../components/labeled-input/LabeledInput";
 import Button from "../../../components/button/Button";
-import { ButtonType } from "../../../components/button/StyledButton";
+import {ButtonType} from "../../../components/button/StyledButton";
 import { StyledH3 } from "../../../components/common/text";
+import { useQueryClient } from "@tanstack/react-query";
+import { Formik } from "formik";
+import {useHttpRequestService} from "../../../service/HttpRequestService";
+import {useState} from "react";
 
 const SignInPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const queryClient = useQueryClient();
 
-  const httpRequestService = useHttpRequestService();
+  const { signIn } = useHttpRequestService();
   const navigate = useNavigate();
   const { t } = useTranslation();
+    const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = () => {
-    httpRequestService
-      .signIn({ email, password })
-      .then(() => navigate("/"))
-      .catch(() => setError(true));
+  const submit = async ({ email, password }: { email: string; password: string }) => {
+    try {
+      setError(null);
+      await signIn({ email, password });
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
+      await queryClient.refetchQueries({ queryKey: ["me"] });
+      navigate("/");
+    } catch (err) {
+      setError("Invalid email or password.");
+    }
   };
 
   return (
-    <AuthWrapper>
-      <div className={"border"}>
-        <div className={"container"}>
-          <div className={"header"}>
-            <img src={logo} alt={"Twitter Logo"} />
-            <StyledH3>{t("title.login")}</StyledH3>
-          </div>
-          <div className={"input-container"}>
-            <LabeledInput
-              required
-              placeholder={"Enter user..."}
-              title={t("input-params.username")}
-              error={error}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <LabeledInput
-              type="password"
-              required
-              placeholder={"Enter password..."}
-              title={t("input-params.password")}
-              error={error}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <p className={"error-message"}>{error && t("error.login")}</p>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <Button
-              text={t("buttons.login")}
-              buttonType={ButtonType.FOLLOW}
-              size={"MEDIUM"}
-              onClick={handleSubmit}
-            />
-            <Button
-              text={t("buttons.register")}
-              buttonType={ButtonType.OUTLINED}
-              size={"MEDIUM"}
-              onClick={() => navigate("/sign-up")}
-            />
+      <AuthWrapper>
+        <div className={"border"}>
+          <div className={"container"}>
+            <div className={"header"}>
+              <img src={logo} alt={"Twitter Logo"} />
+              <StyledH3>{t("title.login")}</StyledH3>
+            </div>
+            <Formik
+                initialValues={{ email: "", password: "" }}
+                validate={(values) => {
+                  const errors: { email?: string; password?: string } = {};
+                  if (!values.email) {
+                    errors.email = t("login.required");
+                  } else if (
+                      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+                  ) {
+                    errors.email = t("login.email.invalid");
+                  }
+
+                  if (!values.password) {
+                    errors.password = t("login.required");
+                  }
+                  return errors;
+                }}
+                onSubmit={(values, { setSubmitting }) => {
+                  submit(values);
+                  setSubmitting(false);
+                }}
+            >
+              {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
+                  <>
+                    <div className={"input-container"}>
+                      <LabeledInput
+                          name="email"
+                          type="email"
+                          required
+                          placeholder={"Enter user..."}
+                          label={t("input-params.email")}
+                          error={errors.email}
+                          hasError={errors.email !== undefined || error !== null}
+                          onChange={handleChange}
+                          value={values.email}
+                      />
+                      <LabeledInput
+                          name="password"
+                          type="password"
+                          required
+                          placeholder={"Enter password..."}
+                          label={t("input-params.password")}
+                          error={errors.password}
+                          hasError={errors.password !== undefined || error !== null}
+                          onChange={handleChange}
+                          value={values.password}
+                      />
+                    </div>
+                    <p className={"error-message"}>{error}</p>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <Button
+                          text={t("buttons.login")}
+                          buttonType={ButtonType.FOLLOW}
+                          size={"MEDIUM"}
+                          onClick={() => handleSubmit()}
+                      />
+                      <Button
+                          text={t("buttons.register")}
+                          buttonType={ButtonType.OUTLINED}
+                          size={"MEDIUM"}
+                          onClick={() => navigate("/sign-up")}
+                      />
+                    </div>
+                  </>
+              )}
+            </Formik>
           </div>
         </div>
-      </div>
-    </AuthWrapper>
+      </AuthWrapper>
   );
 };
 

@@ -12,7 +12,8 @@ const httpRequestService = {
     }
   },
   signIn: async (data: SignInData) => {
-    const res = await axiosInstance.post(`/auth/login`, data);
+    const cleanedData = removeEmptyFields(data);
+    const res = await axiosInstance.post(`/auth/login`, cleanedData);
     if (res.status === 200) {
       localStorage.setItem("token", `Bearer ${res.data.token}`);
       return true;
@@ -243,6 +244,15 @@ const httpRequestService = {
       return res.data;
     }
   },
+};
+
+const removeEmptyFields = <T extends Record<string, any>>(obj: T): Partial<T> => {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      acc[key as keyof T] = value;
+    }
+    return acc;
+  }, {} as Partial<T>);
 };
 
 const useHttpRequestService = () => httpRequestService;
