@@ -10,6 +10,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Formik } from "formik";
 import {useHttpRequestService} from "../../../service/HttpRequestService";
 import {useState} from "react";
+import {useToast} from "../../../components/toast/ToastContext";
+import {ToastType} from "../../../components/toast/Toast";
 
 const SignInPage = () => {
   const queryClient = useQueryClient();
@@ -17,7 +19,8 @@ const SignInPage = () => {
   const { signIn } = useHttpRequestService();
   const navigate = useNavigate();
   const { t } = useTranslation();
-    const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const {showToast} = useToast();
 
   const submit = async ({ email, password }: { email: string; password: string }) => {
     try {
@@ -25,6 +28,7 @@ const SignInPage = () => {
       await signIn({ email, password });
       await queryClient.invalidateQueries({ queryKey: ["me"] });
       await queryClient.refetchQueries({ queryKey: ["me"] });
+      showToast("Successfully logged in!", ToastType.SUCCESS);
       navigate("/");
     } catch (err) {
       setError("Invalid email or password.");

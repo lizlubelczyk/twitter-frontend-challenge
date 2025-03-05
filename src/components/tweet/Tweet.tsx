@@ -26,8 +26,7 @@ const Tweet = ({post}: TweetProps) => {
   const navigate = useNavigate();
   const { data: user, error, isLoading } = useMe();
 
-  console.log(post)
-    const handleReaction = async (type: string) => {
+  const handleReaction = async (type: string) => {
         let reacted;
         if (type === "LIKE") {
             reacted = actualPost.likes.find((r) => r.userId === user?.id);

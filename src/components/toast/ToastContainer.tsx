@@ -1,12 +1,22 @@
-import styled from "styled-components";
+import styled, {ThemedStyledProps} from "styled-components";
 import { ToastType } from "./Toast";
 import { Theme } from "../../util/LightTheme";
 
 interface ToastContainerProps {
   type: ToastType;
-  theme: Theme;
 }
 
+const getContainerColor = (props: ToastContainerProps & { theme: Theme }) => {
+    switch (props.type) {
+        case ToastType.ALERT:
+        return props.theme.colors.errorContainer;
+        case ToastType.SUCCESS:
+            console.log(props.theme.colors.black);
+        return props.theme.colors.black;
+        default:
+        return props.theme.colors.containerLine;
+    }
+}
 export const StyledToastContainer = styled.div`
   display: flex;
   padding: 8px 16px;
@@ -15,25 +25,11 @@ export const StyledToastContainer = styled.div`
   position: fixed;
   border-radius: 8px;
   border: 1px solid
-    ${(props: ToastContainerProps) => {
-      switch (props.type) {
-        case ToastType.ALERT:
-          return props.theme.colors.errorContainer;
-        default:
-          return props.theme.colors.errorContainer;
-      }
-    }};
-  background: ${(props: ToastContainerProps) => props.theme.background};
+    ${(props) => getContainerColor(props)};
+  background: ${(props) => props.theme.background};
 
   p {
-    color: ${(props: ToastContainerProps) => {
-      switch (props.type) {
-        case ToastType.ALERT:
-          return props.theme.colors.errorContainer;
-        default:
-          return props.theme.colors.errorContainer;
-      }
-    }};
+    color: ${getContainerColor};
     margin: 0;
     font-variant-numeric: lining-nums tabular-nums;
     /* Body-2 */

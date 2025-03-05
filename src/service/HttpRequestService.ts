@@ -20,14 +20,18 @@ const httpRequestService = {
     }
   },
   createPost: async (data: PostData) => {
-    const res = await axiosInstance.post(`/post`, data);
+    const { content, parentId, images } = data;
+    const res = await axiosInstance.post(`/post`, { content }, {params: { parentId }});
+
     if (res.status === 201) {
       const { upload } = S3Service;
-      for (const imageUrl of res.data.images) {
-        const index: number = res.data.images.indexOf(imageUrl);
-        await upload(data.images![index], imageUrl);
+      const imageUploadUrls = res.data.imageUploadUrls;
+
+      for (const [index, imageUrl] of imageUploadUrls.entries()) {
+        await upload(images![index], imageUrl);
       }
-      return res.data;
+
+      return res.data.post;
     }
   },
   getPaginatedPosts: async (limit: number, skip: string, query: string) => {

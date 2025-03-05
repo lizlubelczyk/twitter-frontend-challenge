@@ -1,14 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { DeleteIcon } from "../../icon/Icon";
+import React, {useEffect, useRef, useState} from "react";
+import {DeleteIcon} from "../../icon/Icon";
 import Modal from "../../modal/Modal";
 import Button from "../../button/Button";
-import { updateFeed } from "../../../redux/user";
-import { useHttpRequestService } from "../../../service/HttpRequestService";
-import { useTranslation } from "react-i18next";
-import { ButtonType } from "../../button/StyledButton";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { Post } from "../../../service";
-import { StyledDeletePostModalContainer } from "./DeletePostModalContainer";
+import {updateFeed} from "../../../redux/user";
+import {useHttpRequestService} from "../../../service/HttpRequestService";
+import {useTranslation} from "react-i18next";
+import {ButtonType} from "../../button/StyledButton";
+import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {Post} from "../../../service";
+import {StyledDeletePostModalContainer} from "./DeletePostModalContainer";
+import {useToast} from "../../toast/ToastContext";
+import {ToastType} from "../../toast/Toast";
 
 interface DeletePostModalProps {
   show: boolean;
@@ -27,15 +29,18 @@ export const DeletePostModal = ({
   const service = useHttpRequestService();
   const { t } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
+  const { showToast } = useToast();
 
   const handleDelete = () => {
     try {
       service.deletePost(id).then((res) => console.log(res));
       const newFeed = feed.filter((post: Post) => post.id !== id);
       dispatch(updateFeed(newFeed));
+      showToast("Post deleted!", ToastType.SUCCESS);
       handleClose();
     } catch (error) {
       console.log(error);
+        showToast("Error deleting post!", ToastType.ALERT);
     }
   };
 
@@ -60,6 +65,17 @@ export const DeletePostModal = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showModal]);
+
+  useEffect(() => {
+    if (show) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [show]);
 
   return (
       <>

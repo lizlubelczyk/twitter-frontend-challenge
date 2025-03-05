@@ -13,6 +13,9 @@ import {StyledButtonContainer} from "./ButtonContainer";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../redux/store";
 import { useMe, useGetPosts } from "../../hooks";
+import {useHttpRequestService} from "../../service/HttpRequestService";
+import {useToast} from "../toast/ToastContext";
+import {ToastType} from "../toast/Toast";
 
 interface TweetBoxProps {
     parentId?: string;
@@ -35,20 +38,25 @@ const TweetBox: React.FC<TweetBoxProps> = (props: TweetBoxProps) => {
 
     const { data: user, error, isLoading } = useMe();
     const { data: posts, error: postsError, isLoading: postsLoading } = useGetPosts(query, limit, skip);
+    const { createPost } = useHttpRequestService();
+    const { showToast } = useToast();
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContent(e.target.value);
     };
     const handleSubmit = async () => {
         try {
+            await createPost({content, images, parentId});
             setContent("");
             setImages([]);
             setImagesPreview([]);
             dispatch(setLength(length + 1));
             dispatch(updateFeed(posts));
+            showToast("Tweeted!", ToastType.SUCCESS);
             close && close();
         } catch (e) {
             console.log(e);
+            showToast("Error tweeting!", ToastType.ALERT);
         }
     };
 

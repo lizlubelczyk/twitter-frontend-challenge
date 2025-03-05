@@ -1,15 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Modal from "../../modal/Modal";
 import logo from "../../../assets/logo.png";
 import Button from "../../button/Button";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import {useNavigate} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 import SwitchButton from "../../switch/SwitchButton";
-import { ButtonType } from "../../button/StyledButton";
-import { StyledPromptContainer } from "./PromptContainer";
-import { StyledContainer } from "../../common/Container";
-import { StyledP } from "../../common/text";
-import { useMe } from "../../../hooks";
+import {ButtonType} from "../../button/StyledButton";
+import {StyledPromptContainer} from "./PromptContainer";
+import {StyledContainer} from "../../common/Container";
+import {StyledP} from "../../common/text";
+import {useMe} from "../../../hooks";
+import {useToast} from "../../toast/ToastContext";
+import {ToastType} from "../../toast/Toast";
 
 interface LogoutPromptProps {
   show: boolean;
@@ -22,6 +24,7 @@ const LogoutPrompt = ({ show }: LogoutPromptProps) => {
   const { t, i18n } = useTranslation();
   const { data: user, error, isLoading } = useMe();
   const promptRef = useRef<HTMLDivElement>(null);
+  const { showToast } = useToast();
 
   const handleClickOutside = (event: MouseEvent) => {
     if (promptRef.current && !promptRef.current.contains(event.target as Node)) {
@@ -43,6 +46,7 @@ const LogoutPrompt = ({ show }: LogoutPromptProps) => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    showToast("Successfully logged out!", ToastType.SUCCESS);
     navigate("/sign-in");
   };
 

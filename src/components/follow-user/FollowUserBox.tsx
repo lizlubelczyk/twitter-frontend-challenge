@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import Button from "../button/Button";
-import { useHttpRequestService } from "../../service/HttpRequestService";
+import {useHttpRequestService} from "../../service/HttpRequestService";
 import UserDataBox from "../user-data-box/UserDataBox";
-import { useTranslation } from "react-i18next";
-import { ButtonType } from "../button/StyledButton";
-import { Author, User } from "../../service";
-import { useMe } from "../../hooks";
+import {useTranslation} from "react-i18next";
+import {ButtonType} from "../button/StyledButton";
+import {Author, User} from "../../service";
+import {useMe} from "../../hooks";
 import {StyledFollowUserBox} from "./StyledFollowUserBox";
+import {useToast} from "../toast/ToastContext";
+import {ToastType} from "../toast/Toast";
 
 interface FollowUserBoxProps {
     profilePicture?: string;
@@ -26,6 +28,7 @@ const FollowUserBox = ({
     const [user, setUser] = useState<User>();
     const { data, error, isLoading } = useMe();
     const [isFollowing, setIsFollowing] = useState(false);
+    const {showToast} = useToast();
 
     useEffect(() => {
         if (data) {
@@ -37,8 +40,10 @@ const FollowUserBox = ({
     const handleFollow = async () => {
         if (isFollowing) {
             await service.unfollowUser(id);
+            showToast("Unfollowed!", ToastType.SUCCESS);
         } else {
             await service.followUser(id);
+            showToast("Followed!", ToastType.SUCCESS);
         }
         setIsFollowing(!isFollowing);
     };
