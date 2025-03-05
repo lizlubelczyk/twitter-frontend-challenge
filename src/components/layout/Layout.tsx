@@ -9,6 +9,7 @@ import global_es from "../../translations/es/global.json";
 import { store } from "../../redux/store";
 import { LightTheme } from "../../util/LightTheme";
 import { ROUTER } from "./Router";
+import {ToastProvider} from "../toast/ToastContext";
 
 i18next.use(initReactI18next).init({
   interpolation: { escapeValue: false },
@@ -29,7 +30,9 @@ export const Layout = () => {
     <I18nextProvider i18n={i18next}>
       <Provider store={store}>
         <ThemeProvider theme={LightTheme}>
-          <RouterProvider router={ROUTER} />
+          <ToastProvider>
+            <RouterProvider router={ROUTER} />
+          </ToastProvider>
         </ThemeProvider>
       </Provider>
     </I18nextProvider>

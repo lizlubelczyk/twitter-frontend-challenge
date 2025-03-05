@@ -10,7 +10,6 @@ export function useMe():any{
 }
 
 export function useGetPosts(query: string, limit: number, skip: number) {
-    console.log("useGetPosts called with:", { query, limit, skip });
     const { getPosts } = useHttpRequestService();
     return useApiQuery([query, limit.toString(), skip.toString()], () => getPosts(query, limit, skip));
 }

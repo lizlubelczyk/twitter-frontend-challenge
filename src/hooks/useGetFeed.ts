@@ -10,14 +10,12 @@ export const useGetFeed = () => {
   const skip = 0;
 
   const { data: posts, isLoading, error } = useGetPosts(query, limit, skip);
-  console.log("useGetFeed");
 
   useEffect(() => {
     if (error) {
       console.error("Error fetching posts:", error);
     }
     if (posts) {
-      console.log("Fetched posts:", posts);
       const updatedPosts = Array.from(new Set([...posts]));
       dispatch(updateFeed(updatedPosts));
       dispatch(setLength(updatedPosts.length));

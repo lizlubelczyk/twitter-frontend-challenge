@@ -1,14 +1,16 @@
-import React, { useState } from "react";
-import { Formik } from "formik";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import React, {useState} from "react";
+import {Formik} from "formik";
+import {useNavigate} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 import AuthWrapper from "../../../pages/auth/AuthWrapper";
-import { useHttpRequestService } from "../../../service/HttpRequestService";
+import {useHttpRequestService} from "../../../service/HttpRequestService";
 import LabeledInput from "../../../components/labeled-input/LabeledInput";
 import Button from "../../../components/button/Button";
-import { ButtonType } from "../../../components/button/StyledButton";
-import { StyledH3 } from "../../../components/common/text";
+import {ButtonType} from "../../../components/button/StyledButton";
+import {StyledH3} from "../../../components/common/text";
 import logo from "../../../assets/logo.png";
+import {useToast} from "../../../components/toast/ToastContext";
+import {ToastType} from "../../../components/toast/Toast";
 
 interface SignUpData {
   name: string;
@@ -23,6 +25,7 @@ const SignUpPage = () => {
   const { t } = useTranslation();
   const { signUp, getProfile } = useHttpRequestService();
   const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const handleSubmit = async (
       values: SignUpData,
@@ -33,10 +36,12 @@ const SignUpPage = () => {
     try {
       await getProfile(values.username);
       setErrors({ username: t("signup.errors.userExists") });
+      showToast("Username already exists!", ToastType.ALERT);
       return;
     } catch {
       if (values.password !== values.confirmPassword) {
         setErrors({ confirmPassword: t("signup.errors.passwordMismatch") });
+        showToast("Passwords do not match!", ToastType.ALERT);
         return;
       }
 
@@ -47,6 +52,7 @@ const SignUpPage = () => {
           .catch(() => setError(t("signup.errors.failed")));
     } finally {
       setSubmitting(false);
+      showToast("Successfully registered!", ToastType.SUCCESS);
     }
   };
 
