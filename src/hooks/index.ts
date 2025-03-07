@@ -20,9 +20,19 @@ export function useGetPostById(id: string) {
     return useApiQuery(["post", id], () => getPostById(id));
 }
 
+export function useGetPostsByUser(id: string, limit: number, skip: number) {
+    const { getPaginatedPostsFromProfile } = useHttpRequestService();
+    return useApiQuery(["profilePosts", id], () => getPaginatedPostsFromProfile(limit, skip, id));
+}
+
 export function useGetProfile(id: string) {
     const { getProfile } = useHttpRequestService();
     return useApiQuery(["profile", id], () => getProfile(id));
+}
+
+export function useGetPaginatedComments(postId: string, limit: number, skip: number) {
+    const { getPaginatedCommentsByPostId } = useHttpRequestService();
+    return useApiQuery(["comments", postId], () => getPaginatedCommentsByPostId(postId, limit, skip));
 }
 
 export function useInvalidateQueriesAtMidnight(queryKeys: string[]) {

@@ -43,7 +43,6 @@ const Tweet = ({post}: TweetProps) => {
                 await service.createReaction(actualPost.id, "retweet");
             }
         }
-        console.log(post.id)
         const newPost = await service.getPostById(post.id);
         setActualPost(newPost);
     };

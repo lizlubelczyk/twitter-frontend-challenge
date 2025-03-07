@@ -30,11 +30,11 @@ const ProfilePage = () => {
   const { t } = useTranslation();
   const { data: user } = useMe();
   const { data: profile, refetch } = useGetProfile(id!);
+  console.log(profile, "profile");
   const { showToast } = useToast();
 
   const handleButtonType = (): { component: ButtonType; text: string } => {
     if (profile?.user.id === user?.id) {
-      console.log("profile?.id === user?.id");
       return {component: ButtonType.DELETE, text: t("buttons.delete")};
     }
     if (following)
@@ -124,7 +124,7 @@ const ProfilePage = () => {
                       flexDirection={"row"}
                   >
                     <ProfileInfo
-                        name={profile!.user.name!}
+                        name={profile.user.name}
                         username={profile!.user.username}
                         profilePicture={profile!.user.profilePicture}
                     />
@@ -136,7 +136,7 @@ const ProfilePage = () => {
                     />
                   </StyledContainer>
                 </StyledContainer>
-                <StyledContainer width={"100%"}>
+                <StyledContainer width={"100%"} style={{ flexGrow: 1, overflowY: "auto" }}>
                   {profile.user.followers ? (
                       <ProfileFeed />
                   ) : (
