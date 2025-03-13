@@ -16,6 +16,7 @@ import { useMe, useGetPosts } from "../../hooks";
 import {useHttpRequestService} from "../../service/HttpRequestService";
 import {useToast} from "../toast/ToastContext";
 import {ToastType} from "../toast/Toast";
+import {useApiMutation} from "../../hooks/useReactQuery";
 
 interface TweetBoxProps {
     parentId?: string;
@@ -41,12 +42,17 @@ const TweetBox: React.FC<TweetBoxProps> = (props: TweetBoxProps) => {
     const { createPost } = useHttpRequestService();
     const { showToast } = useToast();
 
+    const mutation = useApiMutation(
+        () => createPost({ content, images, parentId }),
+        true,
+        parentId ? ["comments", parentId] : ["feed", "profilePosts"]
+    );
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContent(e.target.value);
     };
     const handleSubmit = async () => {
         try {
-            await createPost({content, images, parentId});
+            await mutation.mutateAsync();
             setContent("");
             setImages([]);
             setImagesPreview([]);

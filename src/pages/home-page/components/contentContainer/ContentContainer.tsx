@@ -19,7 +19,7 @@ const ContentContainer = () => {
         >
           <TweetBox borderless={true}/>
         </StyledContainer>
-        <StyledContainer minHeight={"66vh"} width={"100%"}>
+      <StyledContainer minHeight={"66vh"} width={"100%"} style={{ flexGrow: 1, overflowY: "auto" }}>
           <ContentFeed />
         </StyledContainer>
       </StyledFeedContainer>

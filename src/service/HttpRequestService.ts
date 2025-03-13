@@ -49,6 +49,7 @@ const httpRequestService = {
     const res = await axiosInstance.get(`/post/${query}`, {
       params: {
         limit,
+        skip
       },
     });
     if (res.status === 200) {
@@ -140,13 +141,13 @@ const httpRequestService = {
   },
   getPaginatedPostsFromProfile: async (
     limit: number,
-    after: string,
+    skip: number,
     id: string
   ) => {
     const res = await axiosInstance.get(`/post/by_user/${id}`, {
       params: {
         limit,
-        after,
+        skip,
       }
     });
 
@@ -227,15 +228,16 @@ const httpRequestService = {
     await axiosInstance.delete(`/post/${id}`);
   },
 
+
   getPaginatedCommentsByPostId: async (
     id: string,
     limit: number,
-    after: string
+    skip: number
   ) => {
     const res = await axiosInstance.get(`/comment/${id}`, {
       params: {
         limit,
-        after,
+        skip,
       },
     });
     if (res.status === 200) {
