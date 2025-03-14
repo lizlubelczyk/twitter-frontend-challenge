@@ -45,7 +45,13 @@ const TweetBox: React.FC<TweetBoxProps> = (props: TweetBoxProps) => {
     const mutation = useApiMutation(
         () => createPost({ content, images, parentId }),
         true,
-        parentId ? ["comments", parentId] : ["feed", "profilePosts"]
+        [
+            ["", limit.toString(), skip.toString()],
+            ["following", limit.toString(), skip.toString()],
+            parentId ? ["comments", parentId] : [],
+            ["profilePosts", user?.id ],
+
+        ]
     );
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContent(e.target.value);

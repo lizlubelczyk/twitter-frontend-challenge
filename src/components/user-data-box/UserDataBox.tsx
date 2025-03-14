@@ -3,6 +3,7 @@ import Avatar from "../common/avatar/Avatar";
 import icon from "../../assets/icon.jpg";
 import { useNavigate } from "react-router-dom";
 import {Paragraph, UserContainer, UserInfoContainer} from "./StyledUserDataBox";
+import ReactDOM from "react-dom";
 
 interface UserDataBoxProps {
   name?: string;
@@ -20,7 +21,7 @@ export const UserDataBox = ({
 }: UserDataBoxProps) => {
   const navigate = useNavigate();
 
-  return (
+  return(
     <UserContainer onClick={onClick}>
       <Avatar
         width={"48px"}

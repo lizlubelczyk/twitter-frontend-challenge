@@ -2,6 +2,7 @@ import React, { ReactNode, useEffect, useRef } from "react";
 import { StyledBlurredBackground } from "../common/BlurredBackground";
 import { ModalCloseButton } from "../common/ModalCloseButton";
 import { StyledTweetModalContainer } from "../tweet-modal/TweetModalContainer";
+import ReactDOM from "react-dom";
 
 interface PostModalProps {
   onClose: () => void;
@@ -29,7 +30,7 @@ export const PostModal = ({ onClose, show, children }: PostModalProps) => {
     };
   }, [show]);
 
-  return (
+  return ReactDOM.createPortal(
       <>
         {show && (
             <StyledBlurredBackground>
@@ -39,6 +40,7 @@ export const PostModal = ({ onClose, show, children }: PostModalProps) => {
               </StyledTweetModalContainer>
             </StyledBlurredBackground>
         )}
-      </>
+      </>,
+        document.getElementById("modal-root") as HTMLElement
   );
 };

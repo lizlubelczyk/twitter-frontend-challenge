@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { StyledToastContainer } from "./ToastContainer";
 import {AlertIcon, SuccessIcon} from "../icon/Icon";
 import {Theme} from "../../util/LightTheme";
+import ReactDOM from "react-dom";
 
 export enum ToastType {
   ALERT = "ALERT",
@@ -25,7 +26,7 @@ const Toast = ({ message, type, show }: ToastProps) => {
 
   const toastIcon = iconMap[type] || null;
 
-  return (
+  return ReactDOM.createPortal(
     <>
       {isShown && (
         <StyledToastContainer type={type} onClick={() => setIsShown(false)}>
@@ -33,7 +34,8 @@ const Toast = ({ message, type, show }: ToastProps) => {
           <p>{message}</p>
         </StyledToastContainer>
       )}
-    </>
+    </>,
+    document.getElementById("toast-root") as HTMLElement
   );
 };
 
