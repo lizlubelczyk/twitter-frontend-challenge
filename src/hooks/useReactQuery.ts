@@ -10,7 +10,7 @@ export function useApiQuery<T>(queryKey: string[], queryFn: () => Promise<T>) {
 export function useApiMutation<T>(
     mutationFn: MutationFunction<T>,
     invalidateQuery: boolean = true,
-    invalidateQueryKeys: string[] = [],
+    invalidateQueryKeys: string[][] = [], // Array of query key arrays
     options?: UseMutationOptions<T>
 ) {
     const queryClient = useQueryClient();
@@ -18,7 +18,9 @@ export function useApiMutation<T>(
         mutationFn,
         onSuccess: () => {
             if (invalidateQuery) {
-                queryClient.invalidateQueries({ queryKey: invalidateQueryKeys });
+                invalidateQueryKeys.forEach((key) => {
+                    queryClient.invalidateQueries({ queryKey: key });
+                });
             }
         },
         ...options,

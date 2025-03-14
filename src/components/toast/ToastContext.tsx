@@ -20,13 +20,20 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
 
     const showToast = (message: string, type: ToastType) => {
         setToast({ message, type });
-        setTimeout(() => setToast(null), 3000);
     };
 
     return (
         <ToastContext.Provider value={{ showToast }}>
             {children}
-            {toast && <Toast message={toast.message} type={toast.type} />}
+            <div id="toast-root">
+                {toast && (
+                    <Toast
+                        message={toast.message}
+                        type={toast.type}
+                        show
+                    />
+                )}
+            </div>
         </ToastContext.Provider>
     );
 };
